@@ -30,9 +30,12 @@ function UserList() {
 
   return (
     <>
-      <User user={users[0]} />
-      <User user={users[1]} />
-      <User user={users[2]} />
+      {users.map((user) => (
+        //   key : 각 원소들마다 고유값을 주어 리렌더링 성능 최적화
+        // key로 사용할 id가 없을 경우 map 콜백 함수의 두번재 파라미터 index 이용 (경고만 사라질뿐 성능적으로 좋아지는 것은 아님 )
+        // users.map((user, index) => <User key={index}/>)
+        <User user={user} key={user.id} />
+      ))}
     </>
   );
 }
