@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 function InputSample() {
-  // useState에서 여러개의 객체로 문자열 관리
   const [inputs, setInputs] = useState({
     name: '',
     nickname: '',
   });
+
+  // useRef를 이용해 DOM 선택, 객체 생성
+  // useRef는 DOM선택외에 렌더링과 관계없는 변수관리에도 사용됨
+  const nameInput = useRef();
 
   const { name, nickname } = inputs;
 
   const onChange = (e) => {
     const { name, value } = e.target;
 
-    // react에서 객체 업데이트를 위해서는 이전 객체 복사 후, 특정 값을 덮어씌워야함
-    // 불변성을 지켜줘야함 (컴포넌트 업데이트 성능 최적화)
     setInputs({
       ...inputs,
-      // [name] 은 name 또는 nickname이 됨
       [name]: value,
     });
   };
@@ -26,12 +26,21 @@ function InputSample() {
       name: '',
       nickname: '',
     });
+
+    // current는 DOM을 가리킴
+    nameInput.current.focus();
   };
 
   return (
     <>
-      {/* input에 name값을 넣어 이벤트 발생 시 값 참조하게 함 */}
-      <input name="name" placeholder="name" onChange={onChange} value={name} />
+      {/* 선택하고 싶은 DOM에 ref 넣어줌, DOM에 직접 접근 가능  */}
+      <input
+        name="name"
+        placeholder="name"
+        onChange={onChange}
+        value={name}
+        ref={nameInput}
+      />
       <input
         name="nickname"
         placeholder="nickname"
