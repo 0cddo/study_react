@@ -1,7 +1,15 @@
 import React from 'react';
 
+// 효율적인 방법의 배열 렌더링 (컴포넌트 새로 생성, 한 컴포넌트에 컴포넌트 여러개여도 됩니다~)
+function User({ user }) {
+  return (
+    <div>
+      <b>{user.username}</b> <span>({user.email})</span>
+    </div>
+  );
+}
+
 function UserList() {
-  // 비효율적인 방법 배열 렌더링
   const users = [
     {
       id: 1,
@@ -22,15 +30,9 @@ function UserList() {
 
   return (
     <>
-      <div>
-        <b>{users[0].username}</b> <span>({users[0].email})</span>
-      </div>
-      <div>
-        <b>{users[1].username}</b> <span>({users[0].email})</span>
-      </div>
-      <div>
-        <b>{users[2].username}</b> <span>({users[0].email})</span>
-      </div>
+      <User user={users[0]} />
+      <User user={users[1]} />
+      <User user={users[2]} />
     </>
   );
 }
