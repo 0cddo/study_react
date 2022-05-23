@@ -1,25 +1,47 @@
 import React, { useState } from 'react';
 
 function InputSample() {
-  const [text, setText] = useState('');
+  // useState에서 여러개의 객체로 문자열 관리
+  const [inputs, setInputs] = useState({
+    name: '',
+    nickname: '',
+  });
 
-  // onChange 이벤트 이용하기
+  const { name, nickname } = inputs;
+
   const onChange = (e) => {
-    setText(e.target.value); // input 입력한 값
+    const { name, value } = e.target;
+
+    // react에서 객체 업데이트를 위해서는 이전 객체 복사 후, 특정 값을 덮어씌워야함
+    // 불변성을 지켜줘야함 (컴포넌트 업데이트 성능 최적화)
+    setInputs({
+      ...inputs,
+      // [name] 은 name 또는 nickname이 됨
+      [name]: value,
+    });
   };
 
-  //   onClick 이벤트
   const onReset = () => {
-    setText('');
+    setInputs({
+      name: '',
+      nickname: '',
+    });
   };
+
   return (
     <>
-      {/* value={text} 설정해야 나중에 input 값 초기화됨 */}
-      <input onChange={onChange} value={text} />
+      {/* input에 name값을 넣어 이벤트 발생 시 값 참조하게 함 */}
+      <input name="name" placeholder="name" onChange={onChange} value={name} />
+      <input
+        name="nickname"
+        placeholder="nickname"
+        onChange={onChange}
+        value={nickname}
+      />
       <button onClick={onReset}>초기화</button>
       <div>
         <b>값: </b>
-        {text}
+        {name} ({nickname})
       </div>
     </>
   );
