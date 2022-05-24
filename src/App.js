@@ -1,8 +1,25 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
+import CreateUser from './CreateUser';
 import UserList from './UserList';
 
 function App() {
-  const users = [
+  const [inputs, setInputs] = useState({
+    username: '',
+    email: '',
+  });
+
+  const { username, email } = inputs;
+
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    setInputs({
+      ...inputs,
+      [name]: value,
+    });
+  };
+
+  // 컴포넌트의 상태로 관리
+  const [users, setUsers] = useState([
     {
       id: 1,
       username: 'young eun',
@@ -18,24 +35,39 @@ function App() {
       username: 'shim ddo',
       email: 'hello-ddo@gmail.com',
     },
-  ];
+  ]);
 
-  // 변수 값을 기억하고 싶을 때 사용
+  // 배열의 불변성 지키면서 배열에 새로운 항목 추구하기 (spread 연산자 사용하기 )
+  // push 사용하면 안됨
   const nextId = useRef(4);
 
   const onCreate = () => {
-    console.log(nextId.current); // 4
-    nextId.current += 1; // 값이 바뀐다고 해서 컴포넌트 리렌더링 되지 않음
+    // 새로운 user 객체 만들기
+    const user = {
+      id: nextId.current,
+      username,
+      email,
+    };
+    // setUsers([...users, user]);  // spread 연산자 사용
+    setUsers(users.concat(user)); // concat 함수 사용
+    setInputs({
+      username: '',
+      email: '',
+    });
+    nextId.current += 1;
   };
 
-  return <UserList users={users} />;
+  return (
+    <>
+      <CreateUser
+        username={username}
+        email={email}
+        onChange={onChange}
+        onCreate={onCreate}
+      />
+      <UserList users={users} />
+    </>
+  );
 }
 
 export default App;
-
-// useRef 사용
-// - 컴포넌트가 리렌더링 될 때마다 특정 값을 관리 할 때 사용함
-// - setTimeout, setInterval의 id
-// - 외부라이브러리를 사용하여 생성된 인스턴스
-// - scroll 위치알아야할 때 등..
-// - useRef로 관리하는 값은 바뀌어도 컴포넌트 리렌더링안됨
