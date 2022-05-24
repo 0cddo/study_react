@@ -23,16 +23,19 @@ function App() {
       id: 1,
       username: 'young eun',
       email: 'hello0@gmail.com',
+      active: true,
     },
     {
       id: 2,
       username: 'hyun joon',
       email: 'hellojoon@gmail.com',
+      active: false,
     },
     {
       id: 3,
       username: 'shim ddo',
       email: 'hello-ddo@gmail.com',
+      active: false,
     },
   ]);
 
@@ -53,10 +56,19 @@ function App() {
     nextId.current += 1;
   };
 
-  // filter 함수 (특정 조건 요소를 추출하여 새로운 배열 생성)를 사용하여 onRemove 함수 만들기
-  // user.id와 같지 않은 id만 새로 setUsers 배열로 만들어서 onRemove의 파라미터로 들어가는 id는 삭제되게 됨
   const onRemove = (id) => {
     setUsers(users.filter((user) => user.id !== id));
+  };
+
+  // 클릭했을 때 특정 함수 호출하는 함수
+  // 불변성을 지키면서 배열 원소 업데이트할 때 map 함수 사용
+  // 특정 개체 업데이트 시, `...user` 처럼 기존의 값에서 새로운 값 덮어씌우는 형태로 만듬
+  const onToggle = (id) => {
+    setUsers(
+      users.map((user) =>
+        user.id === id ? { ...user, active: !user.active } : user
+      )
+    );
   };
 
   return (
@@ -67,7 +79,7 @@ function App() {
         onChange={onChange}
         onCreate={onCreate}
       />
-      <UserList users={users} onRemove={onRemove} />
+      <UserList users={users} onRemove={onRemove} onToggle={onToggle} />
     </>
   );
 }
