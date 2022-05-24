@@ -18,7 +18,6 @@ function App() {
     });
   };
 
-  // 컴포넌트의 상태로 관리
   const [users, setUsers] = useState([
     {
       id: 1,
@@ -37,24 +36,27 @@ function App() {
     },
   ]);
 
-  // 배열의 불변성 지키면서 배열에 새로운 항목 추구하기 (spread 연산자 사용하기 )
-  // push 사용하면 안됨
   const nextId = useRef(4);
 
   const onCreate = () => {
-    // 새로운 user 객체 만들기
     const user = {
       id: nextId.current,
       username,
       email,
     };
-    // setUsers([...users, user]);  // spread 연산자 사용
-    setUsers(users.concat(user)); // concat 함수 사용
+    // setUsers([...users, user]);
+    setUsers(users.concat(user));
     setInputs({
       username: '',
       email: '',
     });
     nextId.current += 1;
+  };
+
+  // filter 함수 (특정 조건 요소를 추출하여 새로운 배열 생성)를 사용하여 onRemove 함수 만들기
+  // user.id와 같지 않은 id만 새로 setUsers 배열로 만들어서 onRemove의 파라미터로 들어가는 id는 삭제되게 됨
+  const onRemove = (id) => {
+    setUsers(users.filter((user) => user.id !== id));
   };
 
   return (
@@ -65,7 +67,7 @@ function App() {
         onChange={onChange}
         onCreate={onCreate}
       />
-      <UserList users={users} />
+      <UserList users={users} onRemove={onRemove} />
     </>
   );
 }
