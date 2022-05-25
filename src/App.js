@@ -1,6 +1,16 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useMemo } from 'react';
 import CreateUser from './CreateUser';
 import UserList from './UserList';
+
+// useMemo Hook
+// input 상태 관리로 인해 컴포넌트가 리렌더링될 때마다 활성 사용자 수 카운팅함 -> 이럴 때 useMemo Hook 사용
+// 특정 값이 바뀔 때만 특정 함수 사용해서 연산, 안바뀌면 재사용함
+// - 이전에 연산된 값을 재사용할 때 사용
+// - 성능 최적화 할 때 주로 사용
+function countActiveUsers(users) {
+  console.log('활성 사용자 수를 세는 중...');
+  return users.filter((user) => user.active).length;
+}
 
 function App() {
   const [inputs, setInputs] = useState({
@@ -60,9 +70,6 @@ function App() {
     setUsers(users.filter((user) => user.id !== id));
   };
 
-  // 클릭했을 때 특정 함수 호출하는 함수
-  // 불변성을 지키면서 배열 원소 업데이트할 때 map 함수 사용
-  // 특정 개체 업데이트 시, `...user` 처럼 기존의 값에서 새로운 값 덮어씌우는 형태로 만듬
   const onToggle = (id) => {
     setUsers(
       users.map((user) =>
@@ -70,6 +77,11 @@ function App() {
       )
     );
   };
+
+  // useMemo Hook
+  //  첫번째 파라미터 함수, 두번째 파라미터 deps
+  // deps 배열의 값이 바뀌어야만 함수를 연산함, 최적화
+  const count = useMemo(() => countActiveUsers(users), [users]);
 
   return (
     <>
@@ -80,6 +92,7 @@ function App() {
         onCreate={onCreate}
       />
       <UserList users={users} onRemove={onRemove} onToggle={onToggle} />
+      <div>활성 사용자 수: {count}</div>
     </>
   );
 }
