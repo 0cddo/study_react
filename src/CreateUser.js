@@ -1,7 +1,7 @@
 import React from 'react';
 
 function CreateUser({ username, email, onChange, onCreate }) {
-  // onChange : input 상태 변화 관리 , onCreate : 새로운 것 생성
+  console.log('create user');
   return (
     <div>
       <input
@@ -20,5 +20,9 @@ function CreateUser({ username, email, onChange, onCreate }) {
     </div>
   );
 }
+// * React.memo 함수
+// - 컴포넌트 리렌더링 불필요할 경우 이전 렌더링 결과 재사용
+// - 컴포넌트 리렌더링 최적화
+// - props가 바뀌었을 때만 리렌더링됨
 
-export default CreateUser;
+export default React.memo(CreateUser);

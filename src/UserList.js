@@ -1,20 +1,13 @@
 import React, { useEffect } from 'react';
 
-function User({ user, onRemove, onToggle }) {
+// React.memo로 최적화하기
+const User = React.memo(function User({ user, onRemove, onToggle }) {
   const { username, email, id, active } = user;
+  console.log('user list');
 
-  useEffect(() => {
+  /*   useEffect(() => {
     console.log(user);
-    // deps 배열이 없을 경우 모든 값이 호출됨
-    // 리액트에서는 부모 컴포넌트 리렌더링 시, 자식컴포넌트도 리렌더링 됨
-    // 브라우저 상에서는 업데이트된 부분만 바뀌지만 가상돔 상에서는 모든 내용을 렌더링해서 바뀐 부분 적용함 (항목이 많아지면 느려질 가능성 있음, 컴포넌트 리렌더링 최적화 필요)
-  });
-
-  //   * useEffect 사용 예시
-  /* useEffect(() => {
-    loadPost(username, urlSlug);
-  }, [username, urlSlug]);
- */
+  }, [user]); */
 
   return (
     <div>
@@ -32,7 +25,7 @@ function User({ user, onRemove, onToggle }) {
       <button onClick={() => onRemove(id)}>삭제</button>
     </div>
   );
-}
+});
 
 function UserList({ users, onRemove, onToggle }) {
   return (
@@ -49,4 +42,17 @@ function UserList({ users, onRemove, onToggle }) {
   );
 }
 
-export default UserList;
+// * props are equal `React.memo(UserList, props are equal)`
+// 전 후 props 비교 하여 boolean에 따라 리렌더링 방지 여부 컨트롤
+// onRemove, onToggle 안바뀜 -> 리렌더링 방지
+// propsAreEqual함수 사용시 주의 : props가 고정적이여서 비교할 필요가 없는지 꼭 확인 필요함
+export default React.memo(
+  UserList,
+  (prevProps, nextProps) => nextProps.users === prevProps.users
+);
+
+// * 컴포넌트 최적화
+// - useMemo : 연산된 값 재사용
+// - useCallback : 특정함수, (사용한다고 무조건 성능이 좋아지는 것은 아님)
+// - React.memo: 컴포넌트 렌더링 결과물 재사용 (컴포넌트 최적화가 가능할 때 구현함 )
+// 정말 컴포넌트 최적화가 필요한지 확인하고 사용한다
