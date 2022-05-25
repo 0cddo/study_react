@@ -3,25 +3,18 @@ import React, { useEffect } from 'react';
 function User({ user, onRemove, onToggle }) {
   const { username, email, id, active } = user;
 
-  // useEffect Hook 사용하기
-  // 컴포넌트 렌더링 되기 전후(컴포넌트 마운트, 언마운트)에 특정 작업 가능, 컴포넌트 props 업데이트 전후에도 작업 가능
-  //   두번째 파라미터에는 deps 들어감(의존되는 값들을 배열에 넣음), [] 빈 배열일 경우 컴포넌트가 처음 화면에 나타날 때만 실행됨
-  //   UI가 화면에 나타난 상태 이후
   useEffect(() => {
-    // *컴포넌트 마운트 시 추가하는 작업*
-    // - props로 받은 값을 컴포넌트의 state로 설정
-    // - REST API 요청 시
-    // - 라이브러리 사용 시 (D3, Video.js)
-    // - setInterval, setTimeout
-    console.log('컴포넌트가 화면에 나타남');
-    // *컴포넌트 언마운트 시 추가하는 작업*
-    // - clearInterval, clearTimeout
-    // - 라이브러리 인스턴스 제거
+    console.log('user 값이 설정됨');
+    console.log(user);
     return () => {
-      // 컴포넌트가 사라질 때는 클리어 함수(일종의 뒷정리 함수) return 함
-      console.log('컴포넌트가 화면에서 사라짐');
+      // user값 변경 될 때 : 바뀌기 전 값 선 호출 => 바뀐 값 호출
+      console.log('user 값이 바뀌기 전');
+      console.log(user);
     };
-  }, []);
+    // `[user]` 값이 변경될 때마다 함수 호출됨 (마운트 될 때도 호출, 업데이트 될 때 호출)
+    // useEffect props 또는 useState 받아온 값을 참조할 경우 `[]`가 비어있으면 경고 뜸 (deps 배열을 채워야 [user] 값이 최신의 값을 가져오게 됨)
+    // 함수를 참조할 경우에도 deps에 넣어야 제대로 작동함
+  }, [user]);
 
   return (
     <div>
