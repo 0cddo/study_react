@@ -1,16 +1,23 @@
-import { useRef, useState, useMemo } from 'react';
+import { useRef, useState, useMemo, useCallback } from 'react';
 import CreateUser from './CreateUser';
 import UserList from './UserList';
 
-// useMemo Hook
-// input 상태 관리로 인해 컴포넌트가 리렌더링될 때마다 활성 사용자 수 카운팅함 -> 이럴 때 useMemo Hook 사용
-// 특정 값이 바뀔 때만 특정 함수 사용해서 연산, 안바뀌면 재사용함
-// - 이전에 연산된 값을 재사용할 때 사용
-// - 성능 최적화 할 때 주로 사용
 function countActiveUsers(users) {
   console.log('활성 사용자 수를 세는 중...');
   return users.filter((user) => user.active).length;
 }
+
+// * useCallback Hook
+// - 함수 재사용
+// - 컴포넌트가 매번 리렌더링 될 때마다 새로운 함수를 만듬
+// - 새 함수 선언이 리소스를 많이 차지하진 않지만 재사용하면 좋음,
+// - props 안바뀌면 가상돔도 리렌더링 안되고 좋아요~~
+// - 참조하는 props 또는 특정 값을 deps배열에 넣어서 값이 바뀔 때만 함수가 새로 만들어지게 함
+
+// * 컴포넌트 리렌더링 성능 최적화
+// - 현재 어떤 컴포넌트가 리렌더링 되는지 아는법?
+// - react devtools 사용
+// - 컴포넌트 관리 가능
 
 function App() {
   const [inputs, setInputs] = useState({
@@ -20,13 +27,16 @@ function App() {
 
   const { username, email } = inputs;
 
-  const onChange = (e) => {
-    const { name, value } = e.target;
-    setInputs({
-      ...inputs,
-      [name]: value,
-    });
-  };
+  const onChange = useCallback(
+    (e) => {
+      const { name, value } = e.target;
+      setInputs({
+        ...inputs,
+        [name]: value,
+      });
+    },
+    [inputs]
+  );
 
   const [users, setUsers] = useState([
     {
@@ -51,7 +61,7 @@ function App() {
 
   const nextId = useRef(4);
 
-  const onCreate = () => {
+  const onCreate = useCallback(() => {
     const user = {
       id: nextId.current,
       username,
@@ -64,23 +74,26 @@ function App() {
       email: '',
     });
     nextId.current += 1;
-  };
+  }, [username, email, users]);
 
-  const onRemove = (id) => {
-    setUsers(users.filter((user) => user.id !== id));
-  };
+  const onRemove = useCallback(
+    (id) => {
+      setUsers(users.filter((user) => user.id !== id));
+    },
+    [users]
+  );
 
-  const onToggle = (id) => {
-    setUsers(
-      users.map((user) =>
-        user.id === id ? { ...user, active: !user.active } : user
-      )
-    );
-  };
+  const onToggle = useCallback(
+    (id) => {
+      setUsers(
+        users.map((user) =>
+          user.id === id ? { ...user, active: !user.active } : user
+        )
+      );
+    },
+    [users]
+  );
 
-  // useMemo Hook
-  //  첫번째 파라미터 함수, 두번째 파라미터 deps
-  // deps 배열의 값이 바뀌어야만 함수를 연산함, 최적화
   const count = useMemo(() => countActiveUsers(users), [users]);
 
   return (
