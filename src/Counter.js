@@ -1,23 +1,43 @@
-import React, { useState } from 'react';
+import React, { useReducer } from 'react';
+
+// * useReducer Hook
+// -  useState처럼 상태 업데이트에 사용됨
+// - action이라는 객체를 기반으로 상태를 업데이트함 (useState는 setValue() 사용)
+// - action 객체 : 업데이트할 때 참조하는 객체
+// - 상태 업데이트 로직을 컴포넌트 밖으로 분리 가능 (다른 파일에 작성 후 불러와서 사용 가능)
+// - reducer: 상태를 업데이트하는 함수
+// const [ number(현재 상태), dispatch(action을 발생시키는 것)] = useReducer(reducer 함수, 기본값)
+
+// * reducer 함수 생성 (상태의 업데이트 로직이 컴포넌트 밖에 존재)
+function reducer(state, action) {
+  switch (action.type) {
+    case 'INCREMENT':
+      return state + 1;
+    case 'DECREMENT':
+      return state - 1;
+    default:
+      throw new Error('Unhandled action');
+  }
+}
 
 function Counter() {
-  // useState를 이용해 바뀌는 값 관리
-  // [상태 기본값, 현재 상태를 업데이트하는 값]
-  const [number, setNumber] = useState(0);
+  const [number, dispatch] = useReducer(reducer, 0);
+
   const onIncrease = () => {
-    // setNumber(number + 1);
-    //컴포넌트 최적화를 위해 상태 업데이트함수 이용함 (로직 정의)
-    setNumber((prevNumber) => prevNumber + 1);
+    dispatch({
+      type: 'INCREMENT',
+    });
   };
 
   const onDecrease = () => {
-    // setNumber(number - 1);
-    setNumber((prevNumber) => prevNumber - 1);
+    dispatch({
+      type: 'DECREMENT',
+    });
   };
+
   return (
     <>
       <h1>{number}</h1>
-      {/* 이벤트에 함수를 넣어줘야함, 함수호출 아님 (ex. onIncrease() -> 틀림, 렌더링되면 함수 바로 실행됨) */}
       <button onClick={onIncrease}>+1</button>
       <button onClick={onDecrease}>-1 </button>
     </>
