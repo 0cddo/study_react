@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo, useCallback } from 'react';
+import { useRef, useReducer, useMemo, useCallback } from 'react';
 import CreateUser from './CreateUser';
 import UserList from './UserList';
 
@@ -7,30 +7,14 @@ function countActiveUsers(users) {
   return users.filter((user) => user.active).length;
 }
 
-// * React.memo
-// - onToggle, onCreate 함수의 deps에 users가 있음 -> users배열이 바뀌면 해당 함수도 바뀌고 관련 컴포넌트 모두 리렌더링됨,최적화 하기 위해 불필요한 리렌더링 방지함
-// - 해결: 위의 함수들이 users를 참조하면 안됨, useState의 함수형 업데이트를 이용하여 해결
-// -- deps에 `users`를 안넣어도 됨
-function App() {
-  const [inputs, setInputs] = useState({
+// useState 구현 내용 useReducer로 변경
+// - 1. App 컴포넌트에서 사용할 초기상태를 컴포넌트 밖에 선언하기
+const initialState = {
+  inputs: {
     username: '',
     email: '',
-  });
-
-  const { username, email } = inputs;
-
-  const onChange = useCallback(
-    (e) => {
-      const { name, value } = e.target;
-      setInputs({
-        ...inputs,
-        [name]: value,
-      });
-    },
-    [inputs]
-  );
-
-  const [users, setUsers] = useState([
+  },
+  users: [
     {
       id: 1,
       username: 'young eun',
@@ -49,39 +33,82 @@ function App() {
       email: 'hello-ddo@gmail.com',
       active: false,
     },
-  ]);
+  ],
+};
 
+// - 2. reducer 함수 만들기
+function reducer(state, action) {
+  switch (action.type) {
+    case 'CHANGE_INPUT':
+      return {
+        ...state,
+        inputs: {
+          ...state.inputs,
+          [action.name]: action.value,
+        },
+      };
+    case 'CREATE_USER':
+      return {
+        // useState에서는 아래의 작업 각 따로 했는데 이제는 동시 처리 가능
+        inputs: initialState.inputs,
+        users: state.users.concat(action.user),
+      };
+    case 'TOGGLE_USER':
+      return {
+        ...state,
+        users: state.users.map((user) =>
+          user.id === action.id ? { ...user, active: !user.active } : user
+        ),
+      };
+    case 'REMOVE_USER':
+      return {
+        ...state,
+        users: state.users.filter((user) => user.id !== action.id),
+      };
+    default:
+      throw new Error('Unhandled action');
+  }
+}
+
+function App() {
+  const [state, dispatch] = useReducer(reducer, initialState);
   const nextId = useRef(4);
+  const { users } = state;
+  const { username, email } = state.inputs;
+
+  const onChange = useCallback((e) => {
+    const { name, value } = e.target;
+    dispatch({
+      type: 'CHANGE_INPUT',
+      name,
+      value,
+    });
+  }, []);
 
   const onCreate = useCallback(() => {
-    const user = {
-      id: nextId.current,
-      username,
-      email,
-    };
-    // setUsers([...users, user]);
-
-    // * React.memo
-    // setUsers의 콜백함수에서 최신 users를 조회하기 때문에 deps에 굳이 users넣지 않아도됨 -> onCreate함수는 username과 email이 바뀔 때 새로 만들어짐
-    setUsers((users) => users.concat(user));
-    setInputs({
-      username: '',
-      email: '',
+    dispatch({
+      type: 'CREATE_USER',
+      user: {
+        id: nextId.current,
+        username,
+        email,
+      },
     });
     nextId.current += 1;
   }, [username, email]);
 
-  // 함수 최적화: onRemove함수는 컴포넌트가 렌더링될 때 딱 한번 만들어지고 재사용됨
-  const onRemove = useCallback((id) => {
-    setUsers((users) => users.filter((user) => user.id !== id));
+  const onToggle = useCallback((id) => {
+    dispatch({
+      type: 'TOGGLE_USER',
+      id,
+    });
   }, []);
 
-  const onToggle = useCallback((id) => {
-    setUsers((users) =>
-      users.map((user) =>
-        user.id === id ? { ...user, active: !user.active } : user
-      )
-    );
+  const onRemove = useCallback((id) => {
+    dispatch({
+      type: 'REMOVE_USER',
+      id,
+    });
   }, []);
 
   const count = useMemo(() => countActiveUsers(users), [users]);
@@ -94,10 +121,16 @@ function App() {
         onChange={onChange}
         onCreate={onCreate}
       />
-      <UserList users={users} onRemove={onRemove} onToggle={onToggle} />
+      <UserList users={users} onToggle={onToggle} onRemove={onRemove} />
       <div>활성 사용자 수: {count}</div>
     </>
   );
 }
 
 export default App;
+
+// * useReducer vs useState
+// - 상황에 따라 사용합니다
+// - 컴포넌트에서 관리하는 값이 딱 하나, 또는 단순한 숫자일 때는 useState가 편리
+// - 컴포넌트에서 관리하는 값이 여러개, 상태 구조 복잡
+// - 맘에 드는 방식으로 선택해서 사용
