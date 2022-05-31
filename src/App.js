@@ -1,5 +1,6 @@
 import { useRef, useReducer, useMemo, useCallback } from 'react';
 import CreateUser from './CreateUser';
+import useInputs from './useInputs';
 import UserList from './UserList';
 
 function countActiveUsers(users) {
@@ -10,10 +11,6 @@ function countActiveUsers(users) {
 // useState 구현 내용 useReducer로 변경
 // - 1. App 컴포넌트에서 사용할 초기상태를 컴포넌트 밖에 선언하기
 const initialState = {
-  inputs: {
-    username: '',
-    email: '',
-  },
   users: [
     {
       id: 1,
@@ -39,14 +36,6 @@ const initialState = {
 // - 2. reducer 함수 만들기
 function reducer(state, action) {
   switch (action.type) {
-    case 'CHANGE_INPUT':
-      return {
-        ...state,
-        inputs: {
-          ...state.inputs,
-          [action.name]: action.value,
-        },
-      };
     case 'CREATE_USER':
       return {
         // useState에서는 아래의 작업 각 따로 했는데 이제는 동시 처리 가능
@@ -72,18 +61,13 @@ function reducer(state, action) {
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [form, onChange, reset] = useInputs({
+    username: '',
+    email: '',
+  });
+  const { username, email } = form;
   const nextId = useRef(4);
   const { users } = state;
-  const { username, email } = state.inputs;
-
-  const onChange = useCallback((e) => {
-    const { name, value } = e.target;
-    dispatch({
-      type: 'CHANGE_INPUT',
-      name,
-      value,
-    });
-  }, []);
 
   const onCreate = useCallback(() => {
     dispatch({
@@ -95,7 +79,8 @@ function App() {
       },
     });
     nextId.current += 1;
-  }, [username, email]);
+    reset();
+  }, [username, email, reset]);
 
   const onToggle = useCallback((id) => {
     dispatch({
