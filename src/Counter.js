@@ -1,15 +1,59 @@
-import React, { useReducer } from 'react';
+import React, { Component } from 'react';
 
-// * useReducer Hook
-// -  useState처럼 상태 업데이트에 사용됨
-// - action이라는 객체를 기반으로 상태를 업데이트함 (useState는 setValue() 사용)
-// - action 객체 : 업데이트할 때 참조하는 객체
-// - 상태 업데이트 로직을 컴포넌트 밖으로 분리 가능 (다른 파일에 작성 후 불러와서 사용 가능)
-// - reducer: 상태를 업데이트하는 함수
-// const [ number(현재 상태), dispatch(action을 발생시키는 것)] = useReducer(reducer 함수, 기본값)
+// * Component에서 커스텀 메소드 만들기
+//  - class 내부에 함수 선언
 
-// * reducer 함수 생성 (상태의 업데이트 로직이 컴포넌트 밖에 존재)
-function reducer(state, action) {
+class Counter extends Component {
+  // *** this 연결끊김 해결방법 ***
+  // 1. 컴포넌트 생성자 constructor에서 함수 미리 바인딩
+  /* constructor(this.props) {
+      super(props);
+      this.handleIncrease = this.handleIncrease.bind(this)
+      this.handleDecrease = this.handleDecrease.bind(this)
+    } */
+  // 2. 화살표 함수 이용
+
+  /*   constructor(props) {
+    super(props);
+    // state 무조건 객체 형태
+    this.state = {
+      counter: 0,
+    };
+  } */
+
+  // 정식 아니고, 바벨 플러그인 이용해 사용 가능 (클래스 프로퍼티즈)
+  state = { counter: 0, fixed: 1 };
+
+  handleIncrease = () => {
+    // 상태 업데이트를 위해 setState 사용해야함
+    console.log(this); // undefined // 이벤트 등록으로 메소드 연결 끊김
+
+    this.setState({
+      counter: this.state.counter + 1,
+    });
+  };
+
+  handleDecrease = () => {
+    this.setState({
+      counter: this.state.counter - 1,
+    });
+  };
+
+  render() {
+    return (
+      <div>
+        <h1>{this.state.counter}</h1>
+        {/* 이벤트 등록하면서 메소드와 컴포넌트 인스턴스(this)의  관계가 끊김, this */}
+
+        <button onClick={this.handleIncrease}>+1</button>
+        <button onClick={this.handleDecrease}>-1 </button>
+        <p>고정된값: {this.state.fixed}</p>
+      </div>
+    );
+  }
+}
+
+/* function reducer(state, action) {
   switch (action.type) {
     case 'INCREMENT':
       return state + 1;
@@ -42,6 +86,6 @@ function Counter() {
       <button onClick={onDecrease}>-1 </button>
     </>
   );
-}
+} */
 
 export default Counter;

@@ -3,12 +3,12 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import Hello from './Hello';
+import Counter from './Counter';
 
 ReactDOM.render(
   <React.StrictMode>
     {/* <App /> */}
-    <Hello name="0cddo" color="blue" isSpecial />
+    <Counter />
   </React.StrictMode>,
   document.getElementById('root')
 );
