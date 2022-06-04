@@ -1,15 +1,14 @@
-import { useRef, useReducer, useMemo, useCallback } from 'react';
+import { useRef, useReducer, useMemo, useCallback, createContext } from 'react';
 import CreateUser from './CreateUser';
 import useInputs from './useInputs';
 import UserList from './UserList';
 
+// UserList 컴포넌트를 거치지않고 User에 바로 함수 적용
 function countActiveUsers(users) {
   console.log('활성 사용자 수를 세는 중...');
   return users.filter((user) => user.active).length;
 }
 
-// useState 구현 내용 useReducer로 변경
-// - 1. App 컴포넌트에서 사용할 초기상태를 컴포넌트 밖에 선언하기
 const initialState = {
   users: [
     {
@@ -59,6 +58,9 @@ function reducer(state, action) {
   }
 }
 
+// 기본값 필요없어서 null 입력
+export const UserDispatch = createContext(null);
+
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [form, onChange, reset] = useInputs({
@@ -82,40 +84,20 @@ function App() {
     reset();
   }, [username, email, reset]);
 
-  const onToggle = useCallback((id) => {
-    dispatch({
-      type: 'TOGGLE_USER',
-      id,
-    });
-  }, []);
-
-  const onRemove = useCallback((id) => {
-    dispatch({
-      type: 'REMOVE_USER',
-      id,
-    });
-  }, []);
-
   const count = useMemo(() => countActiveUsers(users), [users]);
 
   return (
-    <>
+    <UserDispatch.Provider value={dispatch}>
       <CreateUser
         username={username}
         email={email}
         onChange={onChange}
         onCreate={onCreate}
       />
-      <UserList users={users} onToggle={onToggle} onRemove={onRemove} />
+      <UserList users={users} />
       <div>활성 사용자 수: {count}</div>
-    </>
+    </UserDispatch.Provider>
   );
 }
 
 export default App;
-
-// * useReducer vs useState
-// - 상황에 따라 사용합니다
-// - 컴포넌트에서 관리하는 값이 딱 하나, 또는 단순한 숫자일 때는 useState가 편리
-// - 컴포넌트에서 관리하는 값이 여러개, 상태 구조 복잡
-// - 맘에 드는 방식으로 선택해서 사용
