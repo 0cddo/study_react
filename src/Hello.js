@@ -1,26 +1,45 @@
-import React from 'react';
+import React, { Component } from 'react';
 
-// 조건부렌더링 : props isSpecial에 따라 결과 렌더링
-function Hello({ color, name, isSpecial }) {
+// * 클래스형 컴포넌트
+// - 요즘은 잘안씀
+// - 컴포넌트 선언 또 다른 방식
+// - 클래스형 컴포넌트 유지보수 할 일 있음
+// - 함수형에서 못쓰는 Hook도 있음
+// - 사용할 일 없지만 만약을 위해서 배워요~
+// - Hooks의 등장으로 뒷전이 되버림
+
+class Hello extends Component {
+  // default props 설정 방법
+  static defaultProps = {
+    name: '이름없음',
+  };
+
+  render() {
+    const { color, isSpecial, name } = this.props;
+    return (
+      <div style={{ color }}>
+        {isSpecial && <b>*</b>}
+        안녕하세요 {name}
+      </div>
+    );
+  }
+}
+/* function Hello({ color, name, isSpecial }) {
   return (
-    <div
+    <div 
       style={{
         color,
       }}
     >
-      {/* 삼항연산자 사용 : 보통 내용, 값이 달라져야할 때 사용함, 보여줘야하는 값이 다를 때 사용   */}
-      {/* {isSpecial ? <b>*삼항연산자*</b> : null} */}
       <b>{isSpecial ? '삼항연산자인가요?' : '삼항연산자가 아닌가요?'}</b>
-      {/* &&연산자 사용: 참 거짓 조건부 렌더링은 &&연산자 사용이 좀 더 간편함  */}
       {isSpecial && <b>&&</b>}
-      {/* 참고 : jsx에서 falsy한 값 중 null, undefined, false는 렌더링 되지 않지만 0은 렌더링 됨  */}
       안녕하세요 {name}
     </div>
   );
-}
+} */
 
-Hello.defaultProps = {
+/* Hello.defaultProps = {
   name: '이름없음',
-};
+}; */
 
 export default Hello;
