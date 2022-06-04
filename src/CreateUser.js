@@ -1,7 +1,29 @@
-import React from 'react';
+import React, { useRef, useContext } from 'react';
+import useInputs from './useInputs';
+import { UserDispatch } from './App';
 
-function CreateUser({ username, email, onChange, onCreate }) {
-  console.log('create user');
+// useContext 이용해서 전역관리 하기
+function CreateUser() {
+  const [{ username, email }, onChange, reset] = useInputs({
+    username: '',
+    email: '',
+  });
+  const nextId = useRef(4);
+  const dispatch = useContext(UserDispatch);
+
+  const onCreate = () => {
+    dispatch({
+      type: 'CREATE_USER',
+      user: {
+        id: nextId.current,
+        username,
+        email,
+      },
+    });
+    reset();
+    nextId.current += 1;
+  };
+
   return (
     <div>
       <input
@@ -20,9 +42,5 @@ function CreateUser({ username, email, onChange, onCreate }) {
     </div>
   );
 }
-// * React.memo 함수
-// - 컴포넌트 리렌더링 불필요할 경우 이전 렌더링 결과 재사용
-// - 컴포넌트 리렌더링 최적화
-// - props가 바뀌었을 때만 리렌더링됨
 
 export default React.memo(CreateUser);
