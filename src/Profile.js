@@ -14,8 +14,11 @@ const data = {
   },
 };
 
+export function getData() {
+  return data;
+}
+
 const Profile = () => {
-  // useParams 사용!!
   const { username } = useParams();
   const profile = data[username];
 
