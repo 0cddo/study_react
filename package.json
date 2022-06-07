@@ -4,5 +4,8 @@
   "main": "index.js",
   "repository": "https://github.com/0cddo/study_react.git",
   "author": "0cddo <0.c.dddo@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "redux": "^4.2.0"
+  }
 }
