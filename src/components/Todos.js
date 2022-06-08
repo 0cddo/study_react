@@ -5,7 +5,7 @@ function TodoItem({ todo, onToggle }) {
   return (
     <li
       style={{
-        textDecoration: todo.done ? 'line-througn' : 'none',
+        textDecoration: todo.done ? 'line-through' : 'none',
       }}
       onClick={() => onToggle(todo.id)}
     >
