@@ -1,12 +1,9 @@
-import Counter from './components/Counter';
-import Todo from './components/Todo';
+import CounterContainer from './containers/CounterContainer';
 
 function App() {
   return (
     <div>
-      <Counter number={0} />
-      <hr />
-      <Todo />
+      <CounterContainer />
     </div>
   );
 }

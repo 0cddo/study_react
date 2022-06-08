@@ -1,15 +1,20 @@
+// 프레젠테이션 컴포넌트, UI
 import React from 'react';
 
-const Counter = ({ number, onIncrease, onDecrease }) => {
+function Counter({ number, diff, onIncrease, onDecrease, onSetDiff }) {
+  const onChange = (e) => {
+    onSetDiff(parseInt(e.target.value, 10));
+  };
   return (
     <div>
       <h1>{number}</h1>
       <div>
-        <button onClick={onIncrease}>+1</button>
-        <button onClick={onDecrease}>-1</button>
+        <input type="number" value={diff} onChange={onChange} />
+        <button onClick={onIncrease}>+</button>
+        <button onClick={onDecrease}>-</button>
       </div>
     </div>
   );
-};
+}
 
 export default Counter;
