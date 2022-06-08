@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 // todo item
-function TodoItem({ todo, onToggle }) {
+const TodoItem = React.memo(function TodoItem({ todo, onToggle }) {
   return (
     <li
       style={{
@@ -12,10 +12,10 @@ function TodoItem({ todo, onToggle }) {
       {todo.text}
     </li>
   );
-}
+});
 
 // todo list
-function TodoList({ todos, onToggle }) {
+const TodoList = React.memo(function TodoList({ todos, onToggle }) {
   return (
     <ul>
       {todos.map((todo) => (
@@ -23,7 +23,7 @@ function TodoList({ todos, onToggle }) {
       ))}
     </ul>
   );
-}
+});
 
 function Todos({ todos, onCreate, onToggle }) {
   const [text, setText] = useState('');
@@ -47,4 +47,4 @@ function Todos({ todos, onCreate, onToggle }) {
   );
 }
 
-export default Todos;
+export default React.memo(Todos);
