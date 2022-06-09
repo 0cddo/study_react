@@ -6,6 +6,22 @@ const DECREASE = 'decrease';
 export const increase = () => ({ type: INCREASE });
 export const decrease = () => ({ type: DECREASE });
 
+// thunk 함수 작성
+export const increaseAsync =
+  () =>
+  // 여기서부터 진짜 thunk 함수 부분
+  (dispatch) => {
+    setTimeout(() => {
+      dispatch(increase());
+    }, 1000);
+  };
+
+export const decreaseAsync = () => (dispatch) => {
+  setTimeout(() => {
+    dispatch(decrease());
+  }, 1000);
+};
+
 // 초기값
 const initialState = 0;
 
