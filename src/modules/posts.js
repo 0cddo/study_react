@@ -9,7 +9,7 @@ import {
 // api 요청 위한 액션 생성(3개)
 const GET_POSTS = 'GET_POSTS'; // 특정 요청이 시작됐다
 const GET_POSTS_SUCCESS = 'GET_POSTS-SUCCESS';
-const GET_POSTS_ERROR = 'GET_POST_ERROR';
+const GET_POSTS_ERROR = 'GET_POSTS_ERROR';
 
 const GET_POST = 'GET_POST';
 const GET_POST_SUCCESS = 'GET_POST_SUCCESS';

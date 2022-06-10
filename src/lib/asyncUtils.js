@@ -50,24 +50,24 @@ export const handleAsyncActions = (type, key) => {
 
 // 리듀서 유틸스 생성 (코드 재사용)
 export const reducerUtils = {
-  initial: (data = null) => ({
-    data,
+  initial: () => ({
     loading: false,
+    data: null,
     error: null,
   }),
-  loading: (prevState = null) => ({
-    data: prevState,
+  loading: () => ({
     loading: true,
+    data: null,
     error: null,
   }),
   success: (data) => ({
-    data,
     loading: false,
+    data,
     error: null,
   }),
   error: (error) => ({
-    data: null,
     loading: false,
+    data: null,
     error,
   }),
 };
