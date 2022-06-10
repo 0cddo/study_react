@@ -1,6 +1,7 @@
 // postApi 상태관리 모듈 생성
 import { dispatch } from 'd3';
 import * as postsAPI from '../api/posts';
+import { reducerUtils } from '../lib/asyncUtils';
 
 // api 요청 위한 액션 생성(3개)
 const GET_POSTS = 'GET_POSTS'; // 특정 요청이 시작됐다
@@ -42,8 +43,54 @@ export const getPost = (id) => async (dispatch) => {
     });
   } catch (e) {
     dispatch({
-      type: GET_POSTS_ERROR,
+      type: GET_POST_ERROR,
       error: e,
     });
   }
 };
+
+// 초기값
+const initialState = {
+  posts: reducerUtils.initial(),
+  post: reducerUtils.initial(),
+};
+
+// 액션 처리를 위한 리듀서 생성
+export default function posts(state = initialState, action) {
+  switch (action.type) {
+    case GET_POSTS:
+      return {
+        ...state,
+        posts: reducerUtils.loading(),
+      };
+    case GET_POSTS_SUCCESS:
+      return {
+        ...state,
+        posts: reducerUtils.success(action.posts),
+      };
+    case GET_POSTS_ERROR:
+      return {
+        ...state,
+        posts: reducerUtils.error(action.error),
+      };
+    case GET_POST:
+      return {
+        ...state,
+        post: reducerUtils.loading(),
+      };
+    case GET_POST_SUCCESS:
+      return {
+        ...state,
+        post: reducerUtils.success(action.post),
+      };
+    case GET_POST_ERROR:
+      return {
+        ...state,
+        post: reducerUtils.error(action.error),
+      };
+    default:
+      return state;
+  }
+}
+
+// * 반복되는 코드 리팩토링 필요!!
